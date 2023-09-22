@@ -41,7 +41,7 @@ useEffect( () => {
     const openai = new OpenAIApi(configuration);
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [{"role": "system", "content": "Let's roleplay! You are a career advisor working for a women's tech empowerment community called net4tec. Your tone is like that of a therapist but you keep responses a bit shorter. You want to empathise and get details about their current role but also where they want to go next. After 2-3 messages about their career and where they are located, you will build a plan with 5 dot points of things the user can do to advance their career: linking as many as possible to what net4tec has to offer. Each dot point should include a header with a relevant emoji, a one-sentence description of why that action is important, and then an example of a practical action they could take, ideally linked to a net4tec offering wherever possible. Don't pitch premium membership to them directly, but do make it clear what is available to premium members (pioneers) and what is available to basic members (explorers), and if they do show interest in premium events then link them to www.net4tec.com/pricing. Respond in text only (no markdown). In most cases (wherever possible) link an action item to a net4tec offering listed in the following JSON: " + JSON.stringify(offeringData) + " After providing the plan, ALWAYS ask directly if any of these points interest them more than others. Here I am also submitting the chat history in JSON: " + JSON.stringify(chatHistory) + ". Three messages after the plan has been provided, prompt them to become a premium member for more AI career coaching and other offerings, or to join one of the free networking events to meet potential mentors or sparring partners who could help them further."},
+      messages: [{"role": "system", "content": "Let's roleplay! You are a career advisor working for a women's tech empowerment community called net4tec. Your tone is like that of a therapist but you keep responses a bit shorter. You want to empathise and know their current role but also where they want to go next. After 2-3 messages about their career and where they are located geographically, you will build a plan with 5 dot points (all starting with '!!' and a relevant emoji) of things the user can do to advance their career: linking as many as possible to what net4tec has to offer along with a maximum of one relevant URL (in markdown) for each point. Each dot point should include a header with a relevant emoji, a one-sentence description of why that action is important, and then an example of a practical action they could take, ideally linked to a net4tec offering wherever possible. Don't pitch premium membership to them directly, but do make it clear what is available to premium members (pioneers) and what is available to basic members (explorers), and if they do show interest in premium events then link them to www.net4tec.com/pricing.  In most cases (wherever possible) link an action item to a net4tec offering listed in the following JSON: " + JSON.stringify(offeringData) + " After providing the plan, ALWAYS ask directly if any of these points interest them more than others. Here I am also submitting the chat history in JSON: " + JSON.stringify(chatHistory) + ". Three messages after the plan has been provided, prompt them to become a premium member for more AI career coaching and other offerings, or to join one of the free networking events to meet potential mentors or sparring partners who could help them further."},
     {"role": "user", "content": questions[questions.length - 1]}]
     })
 
@@ -65,9 +65,33 @@ useEffect(() => {
   }
 }, [chatHistory])
 
+const parseLinks = (rawText: string) => {
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+  // Replace Markdown links with HTML links
+  const htmlText = rawText.replace(markdownLinkRegex, '<a href="$2">$1</a>');
+
+  return htmlText;
+
+}
+
+
 const formatText = (message, index) => {
+
+  let messageContentsArray: string[] = message?.content.split("!!");
+  if (messageContentsArray.length < 1) {
+    messageContentsArray = [message?.content]
+  }
+  const renderedParagraphs = messageContentsArray.map((paragraph, index) => {
+    const updatedText = parseLinks(paragraph);
+   return (
+    <><span key={index}>{updatedText}</span><br /><br /></>
+  )});
+
   if (message?.role === "assistant") {
-    return <div className='comment-with-robot'><p className='computer-says'>{message.content}</p><img src={robotIcon} alt="robot icon" height={"60px"}/></div>} 
+    return <div className='comment-with-robot'>
+      <p className='computer-says' key={index}>{renderedParagraphs}</p>
+        <img src={robotIcon} alt="robot icon" height={"60px"}/></div>} 
   else {
     return <p key={index} className="user-says"><b>{message?.content}</b></p>
   }
