@@ -15,11 +15,10 @@ const onClickSubmit = () => {
     return (
         <div className="form-section flex-center">
             <textarea
-            className="chat-input"
-            cols={40}
-            rows={3}
-                className="form-control"
-                placeholder="Ask me anything..."
+            className="chat-input form-control"
+            cols={80}
+            rows={2}
+                placeholder="Enter your comment here"
                 onChange={(e) => {
                     setNewQuestion(e.target.value)
                 }}
@@ -30,7 +29,7 @@ const onClickSubmit = () => {
                     }
             }}
             ></textarea>
-            <button className="btn width125" onClick={onClickSubmit} >
+            <button className="width125" onClick={onClickSubmit} >
                 <b>Coach Me</b>
             </button>
         </div>

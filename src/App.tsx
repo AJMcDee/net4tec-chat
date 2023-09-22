@@ -1,9 +1,10 @@
 
 import { ChatCompletionResponseMessage, Configuration, OpenAIApi } from 'openai';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import FormSection from './FormSection';
-import navbar from './assets/navbar-hardcopy.png';
+import robotIcon from './assets/bot-icon.png';
+import navbar from './assets/navbar-hardcopy.jpg';
 import { offeringData } from './assets/offeringData';
 import topCta from './assets/top-cta.jpg';
 
@@ -15,6 +16,7 @@ function App() {
   }])
   const [questions, setQuestions] = useState<string[]>([])
   const [chatHistory, setChatHistory] = useState<(ChatCompletionResponseMessage | undefined) []>([])
+  const chatWindowDiv = useRef<HTMLDivElement>(null)
 
   const submitQuestion = (question: string) => {
 
@@ -43,13 +45,11 @@ useEffect( () => {
     {"role": "user", "content": questions[questions.length - 1]}]
     })
 
-
-    console.log(JSON.stringify(chatHistory))
-
     const newMessages = [...messages, response.data.choices[0].message]
 
     setMessages(newMessages)
     setChatHistory([...chatHistory, response.data.choices[0].message])
+
 
   }
 
@@ -58,11 +58,19 @@ useEffect( () => {
 
 },[questions])
 
+useEffect(() => {
+  if (chatWindowDiv.current) {
+    chatWindowDiv.current.scrollTop = chatWindowDiv.current.scrollHeight
+
+  }
+}, [chatHistory])
+
 const formatText = (message, index) => {
   if (message?.role === "assistant") {
-    return <p key={index} className="computer-says">{message?.content}</p>} else {
-      return <p key={index} className="user-says"><b>{message?.content}</b></p>
-    }
+    return <div className='comment-with-robot'><p className='computer-says'>{message.content}</p><img src={robotIcon} alt="robot icon" height={"60px"}/></div>} 
+  else {
+    return <p key={index} className="user-says"><b>{message?.content}</b></p>
+  }
 }
 
 
@@ -73,16 +81,21 @@ const formatText = (message, index) => {
           <img src={topCta} alt="top-cta"/>
         </div>
         <div className="nav-background">
-          <img src={navbar} alt="navbar" className="navbar" width="80%"/>
+          <img src={navbar} alt="navbar" className="navbar" height={"90px"}/>
+          <h1>Your AI Career Coach</h1> 
         </div>
-      <h1>Your AI Career Coach</h1> 
+
       <div className='flex-center'>
-      <div className='flex-container'>
-      <p className="computer-says">Hi, I am your AI Career Coach. How are you feeling about work?</p>
-        {chatHistory.map((message, index) => (
+        <div className='flex-container' ref={chatWindowDiv}>
+          <div className='comment-with-robot'>
+         <p className="computer-says">Hi, I am your AI Career Coach. How are you feeling about work?</p>
+<img src={robotIcon} alt="robot icon" height={"60px"}/>
+         </div>
+            {chatHistory.map((message, index) => (
           formatText(message, index)
         ))}
-      </div></div>
+        </div>
+      </div>
       <div className="card sticky-bottom">
 
 <FormSection submitQuestion={submitQuestion}/>
