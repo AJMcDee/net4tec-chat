@@ -76,7 +76,7 @@ const parseLinks = (rawText: string) => {
 }
 
 
-const formatText = (message, index) => {
+const formatText = (message: any, index: any) => {
 
   let messageContentsArray: string[] = message?.content.split("!!");
   if (messageContentsArray.length < 1) {
@@ -96,7 +96,6 @@ const formatText = (message, index) => {
     return <p key={index} className="user-says"><b>{message?.content}</b></p>
   }
 }
-
 
   return (
     <><center>
