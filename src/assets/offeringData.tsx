@@ -26,12 +26,12 @@ export const offeringData : OfferingData = {
             premium: false
         },
         {
-            offeringName: "become a tech mentor",
-            offeringType: "mentorship",
-            offeringLocation: "ad hoc",
-            offeringLink: "https://net4tec.com/category/blog/",
-            offeringDescription: "Women who are already at manager level or above can offer their expertise to more junior members",
-            premium: false
+            offeringName: "Whatsapp Group",
+            offeringType: "Mentorship and community chat",
+            offeringLocation: "WhatsApp",
+            offeringLink: "https://net4tec.com/",
+            offeringDescription: "WhatsApp discussion group for premium members where they can get ad hoc support and advice",
+            premium: true
         },
     ]
 }
