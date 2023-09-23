@@ -69,7 +69,7 @@ button:focus-visible {
 
 .page-container {
   display: grid;
-  grid-template-rows: 70px auto 1fr 100px;
+  grid-template-rows: 50px auto 1fr 100px;
   width: 100vw;
   height: 100vh;
   border: 1px solid #416B7E;
